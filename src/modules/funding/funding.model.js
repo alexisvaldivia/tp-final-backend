@@ -15,11 +15,16 @@ const FundingModel = sequelize.define('Funding', {
 	},
 });
 
-// 🔗 Relaciones
-Funding.belongsTo(User, { foreignKey: 'funder_id', onDelete: 'CASCADE' });
-User.hasMany(Funding, { foreignKey: 'funder_id' });
+FundingModel.belongsTo(UserModel, {
+	foreignKey: 'funder_id',
+	onDelete: 'CASCADE',
+});
+UserModel.hasMany(FundingModel, { foreignKey: 'funder_id' });
 
-Funding.belongsTo(Project, { foreignKey: 'project_id', onDelete: 'CASCADE' });
-Project.hasMany(Funding, { foreignKey: 'project_id' });
+FundingModel.belongsTo(ProjectModel, {
+	foreignKey: 'project_id',
+	onDelete: 'CASCADE',
+});
+ProjectModel.hasMany(FundingModel, { foreignKey: 'project_id' });
 
 export default FundingModel;
