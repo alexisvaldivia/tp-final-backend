@@ -1,15 +1,15 @@
+import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import UserModel from '../modules/users/user.model.js';
 import envs from './envs.js';
 
-export const configurePassport = (passport) => {
+const configurePassport = (passportInstance) => {
 	const options = {
 		jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-		secretOrKey: envs.JWT_SECRET
+		secretOrKey: envs.JWT_SECRET,
 	};
-	console.log();
 
-	passport.use(
+	passportInstance.use(
 		new JwtStrategy(options, async (jwt_payload, done) => {
 			try {
 				const user = await UserModel.findByPk(jwt_payload.id);
@@ -21,3 +21,7 @@ export const configurePassport = (passport) => {
 		})
 	);
 };
+
+configurePassport(passport);
+
+export default passport;

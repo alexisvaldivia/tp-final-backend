@@ -20,7 +20,7 @@ const UserModel = sequelize.define('User', {
 	},
 	email: {
 		type: STRING,
-		unique: true,
+		unique: 'unique_index_idx',
 		allowNull: false,
 	},
 	password: {
@@ -34,10 +34,8 @@ const UserModel = sequelize.define('User', {
 	},
 });
 
-// Antes de crear el registro en la db, se hashea la contraseña
+// Hashear password antes de insertar el registro
 UserModel.beforeCreate(async (user) => {
-
-
 	const salt = await bcrypt.genSalt(10);
 	user.password = await bcrypt.hash(user.password, salt);
 });
