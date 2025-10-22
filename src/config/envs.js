@@ -10,6 +10,7 @@ const envSchema = Joi.object({
 	HOST: Joi.string().required(),
 	DB_DIALECT: Joi.string().required(),
 	SERVER_PORT: Joi.number().required(),
+	JWT_SECRET: Joi.string().required(),
 }).unknown();
 
 const { value: envVars, error } = envSchema.validate(process.env);
@@ -19,12 +20,13 @@ if (error) {
 }
 
 const envs = {
-	DB_NAME: envSchema.DB_NAME,
-	DB_USER: envSchema.DB_USER,
-	DB_PASS: envSchema.DB_PASS,
-	HOST: envSchema.HOST,
-	DB_DIALECT: envSchema.DB_DIALECT,
-	SERVER_PORT: envSchema.SERVER_PORT,
+	DB_NAME: envVars.DB_NAME,
+	DB_USER: envVars.DB_USER,
+	DB_PASS: envVars.DB_PASS,
+	HOST: envVars.HOST,
+	DB_DIALECT: envVars.DB_DIALECT,
+	SERVER_PORT: envVars.SERVER_PORT,
+	JWT_SECRET: envVars.JWT_SECRET,
 };
 
 export default envs;

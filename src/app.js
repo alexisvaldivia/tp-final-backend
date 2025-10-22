@@ -1,17 +1,23 @@
 import express from 'express';
 import envs from './config/envs.js';
-
+import passport from 'passport';
+import { configurePassport } from './config/passport.js';
 import authRouter from './modules/auth/auth.router.js';
 
 const app = express();
 
-app.use(express.json());
-app.use(authRouter);
-
 app.set('port', envs.SERVER_PORT);
 
+app.use(express.json());
+
+// Configurar Passport antes de inicializarlo
+configurePassport(passport);
+app.use(passport.initialize());
+
+app.use(authRouter);
+
 app.get('/', (req, res) => {
-	res.send('TP Final Backend');
+  res.send('TP Final Backend');
 });
 
 export default app;

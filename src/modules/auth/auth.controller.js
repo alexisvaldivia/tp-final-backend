@@ -1,49 +1,34 @@
-import sequelize from '../../config/database.js';
-
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { User } from './user.model.js';
-import dotenv from 'dotenv';
-dotenv.config();
+import UserModel from '../users/user.model.js';
+import { generateToken } from '../../utils/jwtGenerator.js';
 
-export const register = async (req, res) => {
+const register = async (req, res) => {
 	try {
-		const { name, email, password, role } = req.body;
+		const { name, surname, email, password, role } = req.body;
 
-		if (!name || !email || !password) {
-			return res.status(400).json({ message: 'Faltan incompleto.' });
-		}
+		// Verificar si el usuario ya existe
+		const userExists = await UserModel.findOne({ where: { email } });
+		if (userExists)
+			return res.status(400).json({ message: 'El correo ya está registrado.' });
 
-		const existingUser = await User.findOne({ where: { email } });
-		if (existingUser) {
-			return res.status(400).json({ message: 'El email ya está registrado.' });
-		}
-
-		const hashedPassword = await bcrypt.hash(password, 10);
-
-		const newUser = await User.create({
+		// Crear el usuario (el hash se hace en el hook beforeCreate)
+		const newUser = await UserModel.create({
 			name,
+			surname,
 			email,
-			password: hashedPassword,
-			role: role || 'emprendedor', // por defecto
+			password,
+			role,
 		});
 
-		const token = jwt.sign(
-			{
-				id: newUser.id,
-				role: newUser.role,
-				email: newUser.email,
-			},
-			process.env.JWT_SECRET,
-			{ expiresIn: '1h' }
-		);
+		// Generar token
+		const token = generateToken(newUser);
 
-		// Enviar respuesta
 		res.status(201).json({
-			message: 'Usuario registrado correctamente.',
+			message: 'Usuario registrado',
 			user: {
 				id: newUser.id,
 				name: newUser.name,
+				surname: newUser.surname,
 				email: newUser.email,
 				role: newUser.role,
 			},
@@ -51,10 +36,12 @@ export const register = async (req, res) => {
 		});
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ message: 'Error al registrar el usuario.' });
+		res.status(500).json({ message: 'Error al registrar el usuario' });
 	}
 };
 
-export const authController = {
-	singUp,
+const authController = {
+	register,
 };
+
+export default authController;
