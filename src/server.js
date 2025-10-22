@@ -1,12 +1,12 @@
 import app from './app.js';
-import dotenv from 'dotenv';
+import sequelize from './config/database.js';
 
-dotenv.config();
-
-const server = () => {
-	const port = app.get('port');
-	app.listen(port);
-	console.log(`Servidor iniciado en http://localhost:${port}`);
-};
-
-server();
+sequelize
+	.sync({ alter: true })
+	.then(() => {
+		console.log('DB sincronizada con éxito 🚀');
+		app.listen(3000, () =>
+			console.log('Servidor corriendo en http://localhost:3000')
+		);
+	})
+	.catch((err) => console.log('Error al conectar DB:', err));
