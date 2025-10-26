@@ -13,7 +13,8 @@ const register = async (req, res) => {
 
 		const userExists = await UserModel.findOne({ where: { email } });
 
-		if (userExists) return res.status(400).json({ message: 'El correo ya está registrado.' });
+		if (userExists)
+			return res.status(400).json({ message: 'El correo ya está registrado.' });
 
 		const newUser = await UserModel.create({
 			name,
@@ -57,6 +58,7 @@ const login = async (req, res) => {
 		}
 
 		const user = await UserModel.findOne({ where: { email } });
+
 		if (!user) {
 			return res
 				.status(401)
