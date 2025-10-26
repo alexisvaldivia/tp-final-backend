@@ -30,7 +30,7 @@ const ProjectModel = sequelize.define('Project', {
 	},
 });
 
-Project.belongsTo(UserModel, { foreignKey: 'user_id', onDelete: 'CASCADE' });
-User.hasMany(ProjectModel, { foreignKey: 'user_id' });
+ProjectModel.belongsTo(UserModel, { foreignKey: 'user_id', onDelete: 'CASCADE' });
+UserModel.hasMany(ProjectModel, { foreignKey: 'user_id' });
 
 export default ProjectModel;
