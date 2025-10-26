@@ -1,17 +1,20 @@
 import bcrypt from 'bcrypt';
 import UserModel from '../users/user.model.js';
+import { registerSchema, loginSchema } from '../users/user.dto.js';
 import { generateToken } from '../../utils/jwtGenerator.js';
 
 const register = async (req, res) => {
 	try {
+		const { error } = registerSchema.validate(req.body);
+
+		if (error) res.status(401).json({ msg: 'Error al registrarse.' });
+
 		const { name, surname, email, password, role } = req.body;
 
-		// Verificar si el usuario ya existe
 		const userExists = await UserModel.findOne({ where: { email } });
-		if (userExists)
-			return res.status(400).json({ message: 'El correo ya está registrado.' });
 
-		// Crear el usuario (el hash se hace en el hook beforeCreate)
+		if (userExists) return res.status(400).json({ message: 'El correo ya está registrado.' });
+
 		const newUser = await UserModel.create({
 			name,
 			surname,
@@ -20,7 +23,6 @@ const register = async (req, res) => {
 			role,
 		});
 
-		// Generar token
 		const token = generateToken(newUser);
 
 		res.status(201).json({
@@ -40,8 +42,53 @@ const register = async (req, res) => {
 	}
 };
 
+const login = async (req, res) => {
+	try {
+		const { error } = loginSchema.validate();
+
+		if (error) res.status(401).json({ msg: 'Error al Iniciar Sesión' });
+
+		const { email, password } = req.body;
+
+		if (!email || !password) {
+			return res
+				.status(400)
+				.json({ message: 'Email y contraseña requeridos.' });
+		}
+
+		const user = await UserModel.findOne({ where: { email } });
+		if (!user) {
+			return res
+				.status(401)
+				.json({ message: 'Email no asociado a una cuenta.' });
+		}
+
+		const comparePassword = await bcrypt.compare(password, user.password);
+		if (!comparePassword) {
+			return res.status(401).json({ message: 'Contraseña incorrecta.' });
+		}
+
+		const token = generateToken(user);
+
+		return res.json({
+			message: 'Login exitoso',
+			user: {
+				id: user.id,
+				name: user.name,
+				email: user.email,
+				role: user.role,
+			},
+			token,
+		});
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({ message: 'Error al iniciar sesión' });
+	}
+};
+
 const authController = {
 	register,
+	login,
 };
 
 export default authController;

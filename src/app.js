@@ -2,6 +2,7 @@ import express from 'express';
 import envs from './config/envs.js';
 import passport from './config/passport.js';
 import authRouter from './modules/auth/auth.router.js';
+import userRouter from './modules/users/user.router.js'
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use(passport.initialize());
 
 app.use(authRouter);
+app.use(userRouter);
 
 app.get('/', (req, res) => {
   res.send('TP Final Backend');
