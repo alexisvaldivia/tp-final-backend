@@ -5,14 +5,15 @@ import { generateToken } from '../../utils/jwtGenerator.js';
 
 const register = async (req, res) => {
 	try {
-		const { error } = registerSchema.validate(req.body);
-
-		if (error) res.status(401).json({ msg: 'Error al registrarse.' });
+		const { error } = registerSchema.validate(req.body, { abortEarly: false });
+		if (error)
+			return res
+				.status(400)
+				.json({ msg: 'Datos inválidos', details: error.details });
 
 		const { name, surname, email, password, role } = req.body;
 
 		const userExists = await UserModel.findOne({ where: { email } });
-
 		if (userExists)
 			return res.status(400).json({ message: 'El correo ya está registrado.' });
 
@@ -23,10 +24,9 @@ const register = async (req, res) => {
 			password,
 			role,
 		});
-
 		const token = generateToken(newUser);
 
-		res.status(201).json({
+		return res.status(201).json({
 			message: 'Usuario registrado',
 			user: {
 				id: newUser.id,
@@ -39,39 +39,35 @@ const register = async (req, res) => {
 		});
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ message: 'Error al registrar el usuario' });
+		return res.status(500).json({ message: 'Error al registrar el usuario' });
 	}
 };
 
 const login = async (req, res) => {
 	try {
-		const { error } = loginSchema.validate();
-
-		if (error) res.status(401).json({ msg: 'Error al Iniciar Sesión' });
+		const { error } = loginSchema.validate(req.body, { abortEarly: false });
+		if (error)
+			return res
+				.status(400)
+				.json({ msg: 'Datos inválidos', details: error.details });
 
 		const { email, password } = req.body;
-
-		if (!email || !password) {
+		if (!email || !password)
 			return res
 				.status(400)
 				.json({ message: 'Email y contraseña requeridos.' });
-		}
 
 		const user = await UserModel.findOne({ where: { email } });
-
-		if (!user) {
+		if (!user)
 			return res
 				.status(401)
 				.json({ message: 'Email no asociado a una cuenta.' });
-		}
 
 		const comparePassword = await bcrypt.compare(password, user.password);
-		if (!comparePassword) {
+		if (!comparePassword)
 			return res.status(401).json({ message: 'Contraseña incorrecta.' });
-		}
 
 		const token = generateToken(user);
-
 		return res.json({
 			message: 'Login exitoso',
 			user: {
