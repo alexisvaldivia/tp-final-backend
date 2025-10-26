@@ -44,11 +44,9 @@ const getAllUserProjects = async (req, res) => {
 
 		const { error: idError } = idParamSchema.validate({ id: Number(idUser) });
 		if (idError)
-			return res
-				.status(400)
-				.json({
-					msg: 'Id inválido',
-				});
+			return res.status(400).json({
+				msg: 'Id inválido',
+			});
 
 		const user = await UserModel.findByPk(idUser);
 
@@ -69,20 +67,13 @@ const getAllUserProjects = async (req, res) => {
 
 const updateProject = async (req, res) => {
 	try {
-		const { id } = req.params;
-
-		const { error: idError } = idParamSchema.validate({ id: Number(id) });
-		if (idError)
-			return res
-				.status(400)
-				.json({
-					msg: 'Id inválido',
-				});
+		const { idProject } = req.params;
 
 		const { error, value } = updateProjectSchema.validate(req.body, {
 			abortEarly: false,
 			stripUnknown: true,
 		});
+
 		if (error)
 			return res.status(400).json({
 				msg: 'Datos inválidos',
@@ -93,12 +84,13 @@ const updateProject = async (req, res) => {
 				.status(400)
 				.json({ msg: 'No se proporcionaron campos para actualizar' });
 
-		const project = await ProjectModel.findByPk(id);
+		const project = await ProjectModel.findByPk(idProject);
+
 		if (!project)
 			return res.status(404).json({ msg: 'Proyecto no encontrado' });
 
-
 		const user = req.user;
+
 		if (user && project.userId && project.userId !== user.id)
 			return res
 				.status(403)

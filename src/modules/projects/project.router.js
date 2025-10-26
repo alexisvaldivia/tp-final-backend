@@ -10,6 +10,11 @@ projectRouter.post(
 	authMiddleware,
 	projectController.createProject
 );
-projectRouter.get('/projects/:idUser', projectController.getAllUserProjects)
+projectRouter.get('/projects/:idUser', projectController.getAllUserProjects);
+projectRouter.patch(
+	'/projects/:idProject',
+	authMiddleware,
+	projectController.updateProject
+);
 
 export default projectRouter;

@@ -10,7 +10,7 @@ export const createProjectSchema = Joi.object({
 
 export const updateProjectSchema = Joi.object({
     title: Joi.string().min(3).max(255).optional(),
-    description: Joi.string().min(10).optional(),
+    description: Joi.string().optional(),
     goal_amount: Joi.number().precision(2).min(0).optional(),
     raised_amount: Joi.number().precision(2).min(0).optional(),
     status: Joi.string().valid('pendiente', 'financiado', 'rechazado').optional(),
