@@ -10,5 +10,6 @@ projectRouter.post(
 	authMiddleware,
 	projectController.createProject
 );
+projectRouter.get('/projects/:idUser', projectController.getAllUserProjects)
 
 export default projectRouter;
