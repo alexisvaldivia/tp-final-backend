@@ -40,4 +40,11 @@ UserModel.beforeCreate(async (user) => {
 	user.password = await bcrypt.hash(user.password, salt);
 });
 
+UserModel.beforeUpdate(async (user) => {
+    if (user.changed('password')) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(user.password, salt);
+    }
+});
+
 export default UserModel;
