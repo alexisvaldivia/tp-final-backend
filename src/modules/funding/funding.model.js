@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../../config/database.js';
-import UserModel from './userModel.js';
-import ProjectModel from './projectModel.js';
+import UserModel from '../users/user.model.js';
+import ProjectModel from '../projects/project.model.js';
 
 const FundingModel = sequelize.define('Funding', {
 	id: {

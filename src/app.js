@@ -4,6 +4,7 @@ import passport from './config/passport.js';
 import authRouter from './modules/auth/auth.router.js';
 import userRouter from './modules/users/user.router.js';
 import projectRouter from './modules/projects/project.router.js';
+import fundingRouter from './modules/funding/funding.router.js';
 
 const app = express();
 
@@ -17,9 +18,10 @@ app.use(passport.initialize());
 app.use(authRouter);
 app.use(userRouter);
 app.use(projectRouter);
+app.use(fundingRouter);
 
 app.get('/', (req, res) => {
-	res.send('TP Final Backend');
+	res.send('TP Final Backend Alexis Valdivia');
 });
 
 export default app;
