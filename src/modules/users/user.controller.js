@@ -24,12 +24,15 @@ export const getUserById = async (req, res) => {
 	}
 };
 
-const updateUser = async (req, res, next) => {
+const updateUser = async (req, res) => {
+	console.log('usuario actualizado');
+
 	try {
 		const { id } = req.params;
 
 		if (!req.user) return res.status(401).json({ msg: 'No autorizado' });
-		if (String(req.user.id) !== String(id) && req.user.role !== 'admin') {
+
+		if (String(req.user.id) !== String(id)) {
 			return res.status(403).json({ msg: 'No autorizado' });
 		}
 
@@ -43,6 +46,7 @@ const updateUser = async (req, res, next) => {
 		if (req.user.role === 'admin') colsToUpdate.push('role');
 
 		const updates = {};
+
 		for (const col of colsToUpdate) {
 			if (Object.prototype.hasOwnProperty.call(req.body, col)) {
 				updates[col] = req.body[col];
@@ -66,7 +70,8 @@ const updateUser = async (req, res, next) => {
 		});
 		return res.json({ user: updated });
 	} catch (error) {
-		return next(error);
+		console.error(error);
+		res.status(401).json({ msg: error });
 	}
 };
 

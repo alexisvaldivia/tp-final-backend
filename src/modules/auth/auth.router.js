@@ -7,6 +7,4 @@ const authRouter = Router();
 authRouter.post('/register', authController.register);
 authRouter.post('/login', authController.login);
 
-authRouter.get('/profile', authMiddleware, (req, res) => {res.send('perfil')});
-
 export default authRouter;
