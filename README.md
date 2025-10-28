@@ -57,7 +57,7 @@ Estructura por módulos: Users, Projects, Fundings
 
 ## MER
 
-![MER](./image.png)
+![MER](./imgs/image.png)
 
 Entidades:
 
