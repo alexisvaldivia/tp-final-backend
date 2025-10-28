@@ -54,8 +54,8 @@ A continuación se describen los requisitos obligatorios que debe cumplir el pro
 
 - [x] Estructura modular y completa
 - [x] ORM configurado y funcionando
-- [-] DTOs y validaciones aplicadas
-- [-] Autenticación JWT con Passport
-- [ ] Socket.IO implementado y documentado
+- [x] DTOs y validaciones aplicadas
+- [x] Autenticación JWT con Passport
+- [x] Socket.IO implementado y documentado
 - [x] Variables de entorno validadas y `.env` en `.gitignore`
 - [ ] Diagramas y README incluidos
