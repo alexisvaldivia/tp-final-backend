@@ -57,7 +57,7 @@ Estructura por módulos: Users, Projects, Fundings
 
 ## MER
 
-![MER](image.png)
+![MER](./image.png)
 
 Entidades:
 
@@ -73,7 +73,7 @@ Relaciones:
 
 ## UML
 
-![UML](image-1.png)
+![UML](./imgs/image2.png)
 
 ## Casos de Uso
 
@@ -94,8 +94,8 @@ Recibir notificación (Socket)
 
 ## Secuencia (Financiamiento)
 
-Empresa -> API Backend: POST /fundings
-API Backend -> DB: INSERT funding
-API Backend -> DB: UPDATE project.raised_amount
-API Backend -> Socket.IO: emit("funding:created")
+Empresa -> API Backend: POST /fundings <br>
+API Backend -> DB: INSERT funding <br>
+API Backend -> DB: UPDATE project.raised_amount <br>
+API Backend -> Socket.IO: emit("funding:created") <br>
 Socket.IO -> Emprendedor: Notificación recibida
