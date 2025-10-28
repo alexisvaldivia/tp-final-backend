@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import FundingModel from './funding.model.js';
 import ProjectModel from '../projects/project.model.js';
+import app from '../../app.js';
 
 const createFundingSchema = Joi.object({
 	amount: Joi.number().precision(2).positive().required(),
@@ -10,6 +11,8 @@ const createFundingSchema = Joi.object({
 const createFunding = async (req, res) => {
 	try {
 		const user = req.user;
+		const io = app.get('io');
+
 		if (!user) return res.status(401).json({ msg: 'No autorizado' });
 
 		const { error, value } = createFundingSchema.validate(req.body, {
@@ -17,11 +20,9 @@ const createFunding = async (req, res) => {
 			stripUnknown: true,
 		});
 		if (error)
-			return res
-				.status(400)
-				.json({
-					msg: 'Datos inválidos',
-				});
+			return res.status(400).json({
+				msg: 'Datos inválidos',
+			});
 
 		const { amount, projectId } = value;
 
@@ -29,7 +30,6 @@ const createFunding = async (req, res) => {
 		if (!project)
 			return res.status(404).json({ msg: 'Proyecto no encontrado' });
 
-		// Crear funding
 		const funding = await FundingModel.create({
 			amount,
 			funder_id: user.id,
@@ -43,7 +43,18 @@ const createFunding = async (req, res) => {
 
 		await project.update({ raised_amount: newRaised });
 
+		if (io) {
+			console.log('evento emitido');
+
+			io.emit('funding:created', {
+				message: 'Nuevo financiamiento creado',
+			});
+		} else {
+			console.warn('Socket.IO no está disponible');
+		}
+
 		const goal = parseFloat(project.goal_amount || 0);
+
 		if (newRaised >= goal && project.status !== 'financiado') {
 			await project.update({ status: 'financiado' });
 		}
