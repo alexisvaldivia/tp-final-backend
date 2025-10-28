@@ -1,6 +1,6 @@
 # Trabajo Práctico Final - Backend (Plataforma de Crowdfunding)
 
-Plataforma de financiamiento colectivo local para proyectos de emprendedores, donde empresas o el municipio pueden aportar fondos.
+Plataforma de financiamiento colectivo para proyectos de emprendedores locales, donde empresas o el municipio pueden aportar fondos.
 
 ---
 
@@ -40,7 +40,7 @@ npm run dev
 El socket lo unico que hacer es emitir un evento funding:created cuando se crear un nuevo financiamiento
 
 {
-  "message": "Nuevo financiamiento creado",
+"message": "Nuevo financiamiento creado",
 }
 
 ## Arquitectura del proyecto
@@ -54,3 +54,48 @@ Validaciones: Joi
 WebSockets: Socket.IO
 
 Estructura por módulos: Users, Projects, Fundings
+
+## MER
+
+![MER](image.png)
+
+Entidades:
+
+- Usario(id, name, surname, email, password, role)
+- Proyecto(id, title, description, goal_amount, raised_amount, status, user_id)
+- Financia(id, amount, funder_id, project_id)
+
+Relaciones:
+
+- Un User tiene muchos Projects.
+- Un Project tiene muchos Fundings.
+- Un Funding pertenece a un User (funder) y un Project.
+
+## UML
+
+![UML](image-1.png)
+
+## Casos de Uso
+
+Actores:
+
+Emprendedor
+Empresa
+Municipalidad
+
+Casos:
+
+Registrar usuario
+Iniciar sesión
+Crear proyecto
+Financiar proyecto
+Ver proyectos
+Recibir notificación (Socket)
+
+## Secuencia (Financiamiento)
+
+Empresa -> API Backend: POST /fundings
+API Backend -> DB: INSERT funding
+API Backend -> DB: UPDATE project.raised_amount
+API Backend -> Socket.IO: emit("funding:created")
+Socket.IO -> Emprendedor: Notificación recibida
